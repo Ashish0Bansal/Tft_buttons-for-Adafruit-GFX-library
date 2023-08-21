@@ -6,7 +6,7 @@ class tft_buttons{
     uint16_t height;
 
     uint16_t color;
-    char shape; //'R' - rectangle, 'C' -- circular, 'r'
+    char shape; //'R' - rectangle, 'C' -- circular, 'r'-- Rounded Rectangle
     void (*function)();
 
   public:
@@ -35,17 +35,20 @@ class tft_buttons{
     }
 
     void call_function(int x, int y){
-      Serial.print(x);
-      Serial.print(" ");
-
-      Serial.print(x_pos);
-      Serial.print(" ");
-
-      Serial.println(x_pos+width);
       
-      if(x>=x_pos && x<=(x_pos+width)){
-        Serial.print("Calling function\n");
-        (*function)();
+      switch(shape){
+        case 'R':
+        case 'r':
+        default : if((x>=x_pos && x<=(x_pos+width)) && (y>=y_pos && y<=(y_pos+width))){
+                    (*function)();
+                  } 
+                  break;
+        case 'C': int result = (x>x_pos?(x-x_pos):(x_pos-x))*(x>x_pos?(x-x_pos):(x_pos-x))+ (y>y_pos?(y-y_pos):(y_pos-y))*(y>y_pos?(y-y_pos):(y_pos-y));
+                  if(result<=(width*width)){
+                    (*function)(); 
+                  }
       }
+      
+      
     }
 };
